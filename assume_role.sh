@@ -37,6 +37,9 @@ assumerole() {
     fi
     
     data=$(aws sts assume-role --role-arn "$arn" --role-session-name "$session_name")
+    if [[ $? -ne 0 ]]; then
+	return  # aws sts should have written something to stderr in this case
+    fi
     
     export AWS_ACCESS_KEY_ID=$(echo "$data" | jq -r .Credentials.AccessKeyId)
     export AWS_SECRET_ACCESS_KEY=$(echo "$data" | jq -r .Credentials.SecretAccessKey)
